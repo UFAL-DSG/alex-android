@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">AndroidAlex</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="system_unavailable">Omlouváme se, ale Alex momentálně nění dostupná.</string>
+    <string name="system_unavailable_title">Chyba!</string>
+</resources>
