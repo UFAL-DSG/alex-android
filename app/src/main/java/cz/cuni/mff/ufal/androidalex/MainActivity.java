@@ -48,7 +48,7 @@ import cz.cuni.mff.ufal.alex.WsioMessages;
 
 
 public class MainActivity extends ActionBarActivity {
-    String routerAddr = "http://10.0.0.8:9001/";
+    String routerAddr = "http://147.251.253.69:5000/"; //http://10.0.0.8:9001/";
     int sampleRate = 16000;
 
     WebSocket ws;
@@ -123,12 +123,13 @@ public class MainActivity extends ActionBarActivity {
     public void hangup(final View view) {
         showCallButton();
 
-        addChat("Hanging up...", true);
+        addChat("Zavěšeno.", true);
 
-        if(audioPiper != null) {
-            audioPiper.stopRecording();
-            audioPiper = null;
-        }
+        audioPiper.stopRecording();
+        audioPiper = null;
+
+        ws.close();
+        ws = null;
     }
 
     public void addChat(String strMsg, boolean me) {
@@ -149,7 +150,7 @@ public class MainActivity extends ActionBarActivity {
     public void callAlex(final View view) {
         showHangupButton();
 
-        addChat("Calling Alex...", true);
+        addChat("Vytáčím Alex...", true);
 
         AsyncHttpClient.getDefaultInstance()
                 .websocket(routerAddr, null, new AsyncHttpClient.WebSocketConnectCallback() {
@@ -261,7 +262,7 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        ws.setClosedCallback(new CompletedCallback() {
+        webSocket.setClosedCallback(new CompletedCallback() {
             @Override
             public void onCompleted(Exception ex) {
                 at.stop();
