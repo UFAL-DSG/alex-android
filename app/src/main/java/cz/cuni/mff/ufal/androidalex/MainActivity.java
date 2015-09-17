@@ -2,14 +2,6 @@ package cz.cuni.mff.ufal.androidalex;
 
 import android.app.AlertDialog;
 import android.graphics.PorterDuff;
-import android.media.AudioFormat;
-import android.media.AudioManager;
-import android.media.AudioRecord;
-import android.media.AudioTrack;
-import android.media.MediaPlayer;
-import android.media.MediaRecorder;
-import android.media.SoundPool;
-import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,47 +12,44 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.protobuf.ByteString;
-import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.koushikdutta.async.ByteBufferList;
 import com.koushikdutta.async.DataEmitter;
 import com.koushikdutta.async.callback.CompletedCallback;
 import com.koushikdutta.async.callback.DataCallback;
-import com.koushikdutta.async.future.Future;
-import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.WebSocket;
-import com.purplefrog.speexjni.FrequencyBand;
-import com.purplefrog.speexjni.SpeexDecoder;
-import com.purplefrog.speexjni.SpeexEncoder;
 
-import java.io.InputStream;
-import java.lang.reflect.Array;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.ShortBuffer;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.concurrent.PriorityBlockingQueue;
 
 import cz.cuni.mff.ufal.alex.WsioMessages;
 
 
-public class MainActivity extends ActionBarActivity {
-    String routerAddr = "http://147.251.253.69:5000/"; //http://10.0.0.8:9001/";
+public class MainActivity extends ActionBarActivity implements IDebugTerminal {
+    //String routerAddr = "http://10.10.90.143:9001"; //http://195.113.16.35:9001"; //"http://147.251.253.69:5000/"; //
+    String routerAddr = "http://10.0.0.8:9001/";
     int sampleRate = 16000;
 
     WebSocket ws;
     String key;
-    WebSocketAudioPiper audioPiper;
+    WebSocketAudioRecorder audioRecorder;
+    AlexAudioPlayer audioPlayer;
     boolean breakRecording;
     ListView chatView;
     Button btnCallAlex;
     Button btnHangUp;
+    TextView dbgText;
 
     ArrayList<ChatMessage> chatHistory;
     ChatAdapter adapter;
+
+    int currPlaybackBufferPos;
+    int lastAudioFlushSeq = 0;
+    int currUtteranceId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +65,23 @@ public class MainActivity extends ActionBarActivity {
 
         adapter = new ChatAdapter(MainActivity.this, new ArrayList<ChatMessage>());
         chatView.setAdapter(adapter);
+
+        dbgText = (TextView)findViewById(R.id.dbgText);
+    }
+
+    public void dbg(final String text) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                dbgText.append(text + "\n");
+                /*int scrollAmount = dbgText.getLayout().getLineTop(dbgText.getLineCount()) - dbgText.getHeight();
+                if(scrollAmount > 0) {
+                    dbgText.scrollTo(0, scrollAmount);
+                } else {
+                    dbgText.scrollTo(0, 0);
+                }*/
+            }
+        });
     }
 
     @Override
@@ -125,8 +131,10 @@ public class MainActivity extends ActionBarActivity {
 
         addChat("Zavěšeno.", true);
 
-        audioPiper.stopRecording();
-        audioPiper = null;
+        audioRecorder.stopRecording();
+        audioRecorder = null;
+
+        audioPlayer.terminate();
 
         ws.close();
         ws = null;
@@ -145,9 +153,13 @@ public class MainActivity extends ActionBarActivity {
                 displayMessage(msg);
             }
         });
+
+        dbg("Adding chat message.");
     }
 
     public void callAlex(final View view) {
+        dbg("Calling Alex.");
+
         showHangupButton();
 
         addChat("Vytáčím Alex...", true);
@@ -214,8 +226,8 @@ public class MainActivity extends ActionBarActivity {
                         if (ex != null) {
                             Log.e("AndroidAlex", "WebSocket connection exception", ex);
                         } else {
-                            audioPiper = new WebSocketAudioPiper(webSocket, key, sampleRate);
-                            audioPiper.startRecording();
+                            audioRecorder = new WebSocketAudioRecorder(webSocket, key, sampleRate);
+                            audioRecorder.startRecording();
 
                             setupWebSocketPlayback(webSocket);
                         }
@@ -224,35 +236,54 @@ public class MainActivity extends ActionBarActivity {
                 });
     }
 
-    void setupWebSocketPlayback(WebSocket webSocket) {
-        int atBuffSize = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
-        final AudioTrack at = new AudioTrack(
-                AudioManager.STREAM_MUSIC,
-                16000,
-                AudioFormat.CHANNEL_OUT_MONO,
-                AudioFormat.ENCODING_PCM_16BIT,
-                atBuffSize,
-                AudioTrack.MODE_STREAM);
-        at.play();
-
-        final SpeexDecoder dec = new SpeexDecoder(FrequencyBand.WIDE_BAND);
+    void setupWebSocketPlayback(final WebSocket webSocket) {
+        final PriorityBlockingQueue<WsioMessages.AlexToClient> msgQueue = new PriorityBlockingQueue<WsioMessages.AlexToClient>(1000, new Comparator<WsioMessages.AlexToClient>() {
+            @Override
+            public int compare(WsioMessages.AlexToClient lhs, WsioMessages.AlexToClient rhs) {
+                if(lhs.getPriority() < rhs.getPriority()) {
+                    return -1;
+                } else if(lhs.getPriority() > rhs.getPriority()) {
+                    return 1;
+                } else {
+                    if(lhs.getSeq() < rhs.getSeq()) {
+                        return -1;
+                    } else if(lhs.getSeq() > rhs.getSeq()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            }
+        });
 
         webSocket.setDataCallback(new DataCallback() {
             public void onDataAvailable(DataEmitter e, ByteBufferList byteBufferList) {
                 try {
                     WsioMessages.AlexToClient msg = WsioMessages.AlexToClient.parseFrom(byteBufferList.getAllByteArray());
-                    if (msg.getType() == WsioMessages.AlexToClient.Type.SPEECH) {
-                        byte[] encoded = msg.getSpeech().toByteArray();
-                        short[] decoded = dec.decode(encoded);
-                        byte[] buffer = new byte[decoded.length * 2];
-                        ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().put(decoded);
 
-                        at.write(buffer, 0, buffer.length);
-                        at.play();
+                    if (msg.getType() == WsioMessages.AlexToClient.Type.SPEECH ||
+                            msg.getType() == WsioMessages.AlexToClient.Type.SPEECH_BEGIN ||
+                            msg.getType() == WsioMessages.AlexToClient.Type.SPEECH_END) {
+                        if(lastAudioFlushSeq <= msg.getSeq())
+                        {
+                            try {
+                                msgQueue.add(msg);
+                            }
+                            catch (IllegalStateException qe) {
+                                // Just discard the message when the queue is full.
+                            }
+                        }
                     } else if (msg.getType() == WsioMessages.AlexToClient.Type.ASR_RESULT) {
                         addChat(msg.getAsrResult(), true);
                     } else if (msg.getType() == WsioMessages.AlexToClient.Type.SYSTEM_PROMPT) {
                         addChat(msg.getSystemPrompt(), false);
+                    } else if(msg.getType() == WsioMessages.AlexToClient.Type.FLUSH_OUT_AUDIO) {
+                        dbg("Flush Audio.");
+                        msgQueue.clear();
+                        audioPlayer.flush();
+                        msgQueue.clear();
+                        lastAudioFlushSeq = msg.getSeq();
+                        Log.e("msg", "flushed");
                     } else {
                         Log.e("setupWebSocketPlayback", "Unknown msg type.");
                     }
@@ -265,10 +296,18 @@ public class MainActivity extends ActionBarActivity {
         webSocket.setClosedCallback(new CompletedCallback() {
             @Override
             public void onCompleted(Exception ex) {
-                at.stop();
+                audioPlayer.stopPlayback();
             }
         });
 
+        audioPlayer = new AlexAudioPlayer(sampleRate, msgQueue, audioRecorder);
+        audioPlayer.setDebugTerminal(this);
+        audioPlayer.start();
+
+
+
         ws = webSocket;
     }
+
+
 }

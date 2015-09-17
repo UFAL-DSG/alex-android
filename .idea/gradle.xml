@@ -9,7 +9,6 @@
         <option name="gradleJvm" value="1.7" />
         <option name="modules">
           <set>
-            <option value="/tmp/ndk-speex/speexjni" />
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
           </set>

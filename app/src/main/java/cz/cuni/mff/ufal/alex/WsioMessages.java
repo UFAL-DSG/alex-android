@@ -50,6 +50,16 @@ public final class WsioMessages {
      */
     com.google.protobuf.ByteString
         getLocationBytes();
+
+    // optional int32 currently_playing_utterance = 4;
+    /**
+     * <code>optional int32 currently_playing_utterance = 4;</code>
+     */
+    boolean hasCurrentlyPlayingUtterance();
+    /**
+     * <code>optional int32 currently_playing_utterance = 4;</code>
+     */
+    int getCurrentlyPlayingUtterance();
   }
   /**
    * Protobuf type {@code cz.cuni.mff.ufal.alex.ClientToAlex}
@@ -115,6 +125,11 @@ public final class WsioMessages {
             case 26: {
               bitField0_ |= 0x00000004;
               location_ = input.readBytes();
+              break;
+            }
+            case 32: {
+              bitField0_ |= 0x00000008;
+              currentlyPlayingUtterance_ = input.readInt32();
               break;
             }
           }
@@ -259,10 +274,27 @@ public final class WsioMessages {
       }
     }
 
+    // optional int32 currently_playing_utterance = 4;
+    public static final int CURRENTLY_PLAYING_UTTERANCE_FIELD_NUMBER = 4;
+    private int currentlyPlayingUtterance_;
+    /**
+     * <code>optional int32 currently_playing_utterance = 4;</code>
+     */
+    public boolean hasCurrentlyPlayingUtterance() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>optional int32 currently_playing_utterance = 4;</code>
+     */
+    public int getCurrentlyPlayingUtterance() {
+      return currentlyPlayingUtterance_;
+    }
+
     private void initFields() {
       key_ = "";
       speech_ = com.google.protobuf.ByteString.EMPTY;
       location_ = "";
+      currentlyPlayingUtterance_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -285,6 +317,9 @@ public final class WsioMessages {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeBytes(3, getLocationBytes());
       }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeInt32(4, currentlyPlayingUtterance_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -305,6 +340,10 @@ public final class WsioMessages {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(3, getLocationBytes());
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(4, currentlyPlayingUtterance_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -428,6 +467,8 @@ public final class WsioMessages {
         bitField0_ = (bitField0_ & ~0x00000002);
         location_ = "";
         bitField0_ = (bitField0_ & ~0x00000004);
+        currentlyPlayingUtterance_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
 
@@ -468,6 +509,10 @@ public final class WsioMessages {
           to_bitField0_ |= 0x00000004;
         }
         result.location_ = location_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        result.currentlyPlayingUtterance_ = currentlyPlayingUtterance_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -496,6 +541,9 @@ public final class WsioMessages {
           bitField0_ |= 0x00000004;
           location_ = other.location_;
           onChanged();
+        }
+        if (other.hasCurrentlyPlayingUtterance()) {
+          setCurrentlyPlayingUtterance(other.getCurrentlyPlayingUtterance());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -708,6 +756,39 @@ public final class WsioMessages {
         return this;
       }
 
+      // optional int32 currently_playing_utterance = 4;
+      private int currentlyPlayingUtterance_ ;
+      /**
+       * <code>optional int32 currently_playing_utterance = 4;</code>
+       */
+      public boolean hasCurrentlyPlayingUtterance() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>optional int32 currently_playing_utterance = 4;</code>
+       */
+      public int getCurrentlyPlayingUtterance() {
+        return currentlyPlayingUtterance_;
+      }
+      /**
+       * <code>optional int32 currently_playing_utterance = 4;</code>
+       */
+      public Builder setCurrentlyPlayingUtterance(int value) {
+        bitField0_ |= 0x00000008;
+        currentlyPlayingUtterance_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 currently_playing_utterance = 4;</code>
+       */
+      public Builder clearCurrentlyPlayingUtterance() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        currentlyPlayingUtterance_ = 0;
+        onChanged();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:cz.cuni.mff.ufal.alex.ClientToAlex)
     }
 
@@ -771,6 +852,36 @@ public final class WsioMessages {
      */
     com.google.protobuf.ByteString
         getAsrResultBytes();
+
+    // optional int32 priority = 5;
+    /**
+     * <code>optional int32 priority = 5;</code>
+     */
+    boolean hasPriority();
+    /**
+     * <code>optional int32 priority = 5;</code>
+     */
+    int getPriority();
+
+    // optional int32 seq = 6;
+    /**
+     * <code>optional int32 seq = 6;</code>
+     */
+    boolean hasSeq();
+    /**
+     * <code>optional int32 seq = 6;</code>
+     */
+    int getSeq();
+
+    // optional int32 utterance_id = 7;
+    /**
+     * <code>optional int32 utterance_id = 7;</code>
+     */
+    boolean hasUtteranceId();
+    /**
+     * <code>optional int32 utterance_id = 7;</code>
+     */
+    int getUtteranceId();
   }
   /**
    * Protobuf type {@code cz.cuni.mff.ufal.alex.AlexToClient}
@@ -849,6 +960,21 @@ public final class WsioMessages {
               asrResult_ = input.readBytes();
               break;
             }
+            case 40: {
+              bitField0_ |= 0x00000010;
+              priority_ = input.readInt32();
+              break;
+            }
+            case 48: {
+              bitField0_ |= 0x00000020;
+              seq_ = input.readInt32();
+              break;
+            }
+            case 56: {
+              bitField0_ |= 0x00000040;
+              utteranceId_ = input.readInt32();
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -898,13 +1024,25 @@ public final class WsioMessages {
        */
       SPEECH(0, 0),
       /**
-       * <code>SYSTEM_PROMPT = 1;</code>
+       * <code>SPEECH_BEGIN = 1;</code>
        */
-      SYSTEM_PROMPT(1, 1),
+      SPEECH_BEGIN(1, 1),
       /**
-       * <code>ASR_RESULT = 2;</code>
+       * <code>SPEECH_END = 2;</code>
        */
-      ASR_RESULT(2, 2),
+      SPEECH_END(2, 2),
+      /**
+       * <code>SYSTEM_PROMPT = 3;</code>
+       */
+      SYSTEM_PROMPT(3, 3),
+      /**
+       * <code>ASR_RESULT = 4;</code>
+       */
+      ASR_RESULT(4, 4),
+      /**
+       * <code>FLUSH_OUT_AUDIO = 5;</code>
+       */
+      FLUSH_OUT_AUDIO(5, 5),
       ;
 
       /**
@@ -912,13 +1050,25 @@ public final class WsioMessages {
        */
       public static final int SPEECH_VALUE = 0;
       /**
-       * <code>SYSTEM_PROMPT = 1;</code>
+       * <code>SPEECH_BEGIN = 1;</code>
        */
-      public static final int SYSTEM_PROMPT_VALUE = 1;
+      public static final int SPEECH_BEGIN_VALUE = 1;
       /**
-       * <code>ASR_RESULT = 2;</code>
+       * <code>SPEECH_END = 2;</code>
        */
-      public static final int ASR_RESULT_VALUE = 2;
+      public static final int SPEECH_END_VALUE = 2;
+      /**
+       * <code>SYSTEM_PROMPT = 3;</code>
+       */
+      public static final int SYSTEM_PROMPT_VALUE = 3;
+      /**
+       * <code>ASR_RESULT = 4;</code>
+       */
+      public static final int ASR_RESULT_VALUE = 4;
+      /**
+       * <code>FLUSH_OUT_AUDIO = 5;</code>
+       */
+      public static final int FLUSH_OUT_AUDIO_VALUE = 5;
 
 
       public final int getNumber() { return value; }
@@ -926,8 +1076,11 @@ public final class WsioMessages {
       public static Type valueOf(int value) {
         switch (value) {
           case 0: return SPEECH;
-          case 1: return SYSTEM_PROMPT;
-          case 2: return ASR_RESULT;
+          case 1: return SPEECH_BEGIN;
+          case 2: return SPEECH_END;
+          case 3: return SYSTEM_PROMPT;
+          case 4: return ASR_RESULT;
+          case 5: return FLUSH_OUT_AUDIO;
           default: return null;
         }
       }
@@ -1098,11 +1251,62 @@ public final class WsioMessages {
       }
     }
 
+    // optional int32 priority = 5;
+    public static final int PRIORITY_FIELD_NUMBER = 5;
+    private int priority_;
+    /**
+     * <code>optional int32 priority = 5;</code>
+     */
+    public boolean hasPriority() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>optional int32 priority = 5;</code>
+     */
+    public int getPriority() {
+      return priority_;
+    }
+
+    // optional int32 seq = 6;
+    public static final int SEQ_FIELD_NUMBER = 6;
+    private int seq_;
+    /**
+     * <code>optional int32 seq = 6;</code>
+     */
+    public boolean hasSeq() {
+      return ((bitField0_ & 0x00000020) == 0x00000020);
+    }
+    /**
+     * <code>optional int32 seq = 6;</code>
+     */
+    public int getSeq() {
+      return seq_;
+    }
+
+    // optional int32 utterance_id = 7;
+    public static final int UTTERANCE_ID_FIELD_NUMBER = 7;
+    private int utteranceId_;
+    /**
+     * <code>optional int32 utterance_id = 7;</code>
+     */
+    public boolean hasUtteranceId() {
+      return ((bitField0_ & 0x00000040) == 0x00000040);
+    }
+    /**
+     * <code>optional int32 utterance_id = 7;</code>
+     */
+    public int getUtteranceId() {
+      return utteranceId_;
+    }
+
     private void initFields() {
       type_ = cz.cuni.mff.ufal.alex.WsioMessages.AlexToClient.Type.SPEECH;
       speech_ = com.google.protobuf.ByteString.EMPTY;
       systemPrompt_ = "";
       asrResult_ = "";
+      priority_ = 0;
+      seq_ = 0;
+      utteranceId_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -1128,6 +1332,15 @@ public final class WsioMessages {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeBytes(4, getAsrResultBytes());
       }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeInt32(5, priority_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        output.writeInt32(6, seq_);
+      }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        output.writeInt32(7, utteranceId_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -1152,6 +1365,18 @@ public final class WsioMessages {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(4, getAsrResultBytes());
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(5, priority_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(6, seq_);
+      }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(7, utteranceId_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -1277,6 +1502,12 @@ public final class WsioMessages {
         bitField0_ = (bitField0_ & ~0x00000004);
         asrResult_ = "";
         bitField0_ = (bitField0_ & ~0x00000008);
+        priority_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000010);
+        seq_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000020);
+        utteranceId_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000040);
         return this;
       }
 
@@ -1321,6 +1552,18 @@ public final class WsioMessages {
           to_bitField0_ |= 0x00000008;
         }
         result.asrResult_ = asrResult_;
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000010;
+        }
+        result.priority_ = priority_;
+        if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+          to_bitField0_ |= 0x00000020;
+        }
+        result.seq_ = seq_;
+        if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
+          to_bitField0_ |= 0x00000040;
+        }
+        result.utteranceId_ = utteranceId_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -1352,6 +1595,15 @@ public final class WsioMessages {
           bitField0_ |= 0x00000008;
           asrResult_ = other.asrResult_;
           onChanged();
+        }
+        if (other.hasPriority()) {
+          setPriority(other.getPriority());
+        }
+        if (other.hasSeq()) {
+          setSeq(other.getSeq());
+        }
+        if (other.hasUtteranceId()) {
+          setUtteranceId(other.getUtteranceId());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -1596,6 +1848,105 @@ public final class WsioMessages {
   }
   bitField0_ |= 0x00000008;
         asrResult_ = value;
+        onChanged();
+        return this;
+      }
+
+      // optional int32 priority = 5;
+      private int priority_ ;
+      /**
+       * <code>optional int32 priority = 5;</code>
+       */
+      public boolean hasPriority() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      /**
+       * <code>optional int32 priority = 5;</code>
+       */
+      public int getPriority() {
+        return priority_;
+      }
+      /**
+       * <code>optional int32 priority = 5;</code>
+       */
+      public Builder setPriority(int value) {
+        bitField0_ |= 0x00000010;
+        priority_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 priority = 5;</code>
+       */
+      public Builder clearPriority() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        priority_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // optional int32 seq = 6;
+      private int seq_ ;
+      /**
+       * <code>optional int32 seq = 6;</code>
+       */
+      public boolean hasSeq() {
+        return ((bitField0_ & 0x00000020) == 0x00000020);
+      }
+      /**
+       * <code>optional int32 seq = 6;</code>
+       */
+      public int getSeq() {
+        return seq_;
+      }
+      /**
+       * <code>optional int32 seq = 6;</code>
+       */
+      public Builder setSeq(int value) {
+        bitField0_ |= 0x00000020;
+        seq_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 seq = 6;</code>
+       */
+      public Builder clearSeq() {
+        bitField0_ = (bitField0_ & ~0x00000020);
+        seq_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // optional int32 utterance_id = 7;
+      private int utteranceId_ ;
+      /**
+       * <code>optional int32 utterance_id = 7;</code>
+       */
+      public boolean hasUtteranceId() {
+        return ((bitField0_ & 0x00000040) == 0x00000040);
+      }
+      /**
+       * <code>optional int32 utterance_id = 7;</code>
+       */
+      public int getUtteranceId() {
+        return utteranceId_;
+      }
+      /**
+       * <code>optional int32 utterance_id = 7;</code>
+       */
+      public Builder setUtteranceId(int value) {
+        bitField0_ |= 0x00000040;
+        utteranceId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 utterance_id = 7;</code>
+       */
+      public Builder clearUtteranceId() {
+        bitField0_ = (bitField0_ & ~0x00000040);
+        utteranceId_ = 0;
         onChanged();
         return this;
       }
@@ -3760,23 +4111,27 @@ public final class WsioMessages {
   static {
     java.lang.String[] descriptorData = {
       "\n\'alex/components/hub/wsio_messages.prot" +
-      "o\022\025cz.cuni.mff.ufal.alex\"=\n\014ClientToAlex" +
+      "o\022\025cz.cuni.mff.ufal.alex\"b\n\014ClientToAlex" +
       "\022\013\n\003key\030\001 \001(\t\022\016\n\006speech\030\002 \001(\014\022\020\n\010locatio" +
-      "n\030\003 \001(\t\"\270\001\n\014AlexToClient\0226\n\004type\030\001 \001(\0162(" +
-      ".cz.cuni.mff.ufal.alex.AlexToClient.Type" +
-      "\022\016\n\006speech\030\002 \001(\014\022\025\n\rsystem_prompt\030\003 \001(\t\022" +
-      "\022\n\nasr_result\030\004 \001(\t\"5\n\004Type\022\n\n\006SPEECH\020\000\022" +
-      "\021\n\rSYSTEM_PROMPT\020\001\022\016\n\nASR_RESULT\020\002\"\235\001\n\tP" +
-      "ingProto\022\014\n\004addr\030\001 \001(\t\022;\n\006status\030\002 \001(\0162+" +
-      ".cz.cuni.mff.ufal.alex.PingProto.StatusT",
-      "ype\022\013\n\003key\030\003 \001(\t\"8\n\nStatusType\022\r\n\tAVAILA" +
-      "BLE\020\000\022\010\n\004BUSY\020\001\022\021\n\rSHUTTING_DOWN\020\002\"\253\001\n\024W" +
-      "SRouterRequestProto\022>\n\004type\030\001 \001(\01620.cz.c" +
-      "uni.mff.ufal.alex.WSRouterRequestProto.T" +
-      "ype\022.\n\004ping\030\002 \001(\0132 .cz.cuni.mff.ufal.ale" +
-      "x.PingProto\"#\n\004Type\022\010\n\004PING\020\000\022\021\n\rROUTE_R" +
-      "EQUEST\020\001\"9\n\034WSRouterRoutingResponseProto" +
-      "\022\014\n\004addr\030\001 \001(\t\022\013\n\003key\030\002 \001(\t"
+      "n\030\003 \001(\t\022#\n\033currently_playing_utterance\030\004" +
+      " \001(\005\"\244\002\n\014AlexToClient\0226\n\004type\030\001 \001(\0162(.cz" +
+      ".cuni.mff.ufal.alex.AlexToClient.Type\022\016\n" +
+      "\006speech\030\002 \001(\014\022\025\n\rsystem_prompt\030\003 \001(\t\022\022\n\n" +
+      "asr_result\030\004 \001(\t\022\020\n\010priority\030\005 \001(\005\022\013\n\003se" +
+      "q\030\006 \001(\005\022\024\n\014utterance_id\030\007 \001(\005\"l\n\004Type\022\n\n" +
+      "\006SPEECH\020\000\022\020\n\014SPEECH_BEGIN\020\001\022\016\n\nSPEECH_EN",
+      "D\020\002\022\021\n\rSYSTEM_PROMPT\020\003\022\016\n\nASR_RESULT\020\004\022\023" +
+      "\n\017FLUSH_OUT_AUDIO\020\005\"\235\001\n\tPingProto\022\014\n\004add" +
+      "r\030\001 \001(\t\022;\n\006status\030\002 \001(\0162+.cz.cuni.mff.uf" +
+      "al.alex.PingProto.StatusType\022\013\n\003key\030\003 \001(" +
+      "\t\"8\n\nStatusType\022\r\n\tAVAILABLE\020\000\022\010\n\004BUSY\020\001" +
+      "\022\021\n\rSHUTTING_DOWN\020\002\"\253\001\n\024WSRouterRequestP" +
+      "roto\022>\n\004type\030\001 \001(\01620.cz.cuni.mff.ufal.al" +
+      "ex.WSRouterRequestProto.Type\022.\n\004ping\030\002 \001" +
+      "(\0132 .cz.cuni.mff.ufal.alex.PingProto\"#\n\004" +
+      "Type\022\010\n\004PING\020\000\022\021\n\rROUTE_REQUEST\020\001\"9\n\034WSR",
+      "outerRoutingResponseProto\022\014\n\004addr\030\001 \001(\t\022" +
+      "\013\n\003key\030\002 \001(\t"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -3788,13 +4143,13 @@ public final class WsioMessages {
           internal_static_cz_cuni_mff_ufal_alex_ClientToAlex_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_cz_cuni_mff_ufal_alex_ClientToAlex_descriptor,
-              new java.lang.String[] { "Key", "Speech", "Location", });
+              new java.lang.String[] { "Key", "Speech", "Location", "CurrentlyPlayingUtterance", });
           internal_static_cz_cuni_mff_ufal_alex_AlexToClient_descriptor =
             getDescriptor().getMessageTypes().get(1);
           internal_static_cz_cuni_mff_ufal_alex_AlexToClient_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_cz_cuni_mff_ufal_alex_AlexToClient_descriptor,
-              new java.lang.String[] { "Type", "Speech", "SystemPrompt", "AsrResult", });
+              new java.lang.String[] { "Type", "Speech", "SystemPrompt", "AsrResult", "Priority", "Seq", "UtteranceId", });
           internal_static_cz_cuni_mff_ufal_alex_PingProto_descriptor =
             getDescriptor().getMessageTypes().get(2);
           internal_static_cz_cuni_mff_ufal_alex_PingProto_fieldAccessorTable = new

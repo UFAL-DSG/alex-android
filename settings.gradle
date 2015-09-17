@@ -1,6 +1,4 @@
 include ':app'
 
-include ':speexlib'
 
-project(':speexlib').projectDir = new File('/tmp/ndk-speex/speexjni')
 

@@ -35,6 +35,22 @@
         android:id="@+id/chatView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/btnCallAlex" />
+        android:layout_above="@+id/btnCallAlex"
+        android:layout_below="@+id/dbgScroll" />
+
+    <ScrollView
+        android:id="@+id/dbgScroll"
+        android:layout_width="wrap_content"
+        android:layout_height="150dip"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dbgText"
+            />
+
+    </ScrollView>
 
 </RelativeLayout>
