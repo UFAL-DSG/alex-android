@@ -8,8 +8,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -31,7 +34,9 @@ import cz.cuni.mff.ufal.alex.WsioMessages;
 
 public class MainActivity extends ActionBarActivity implements IDebugTerminal {
     //String routerAddr = "http://10.10.90.143:9001"; //http://195.113.16.35:9001"; //"http://147.251.253.69:5000/"; //
-    String routerAddr = "http://10.0.0.8:9001/";
+    String routerAddr = "http://147.251.253.69:5000/";
+    //String routerAddr = "http://10.0.0.8:9001/";
+    //String routerAddr = "http://195.113.16.55:9001/";
     int sampleRate = 16000;
 
     WebSocket ws;
@@ -67,6 +72,7 @@ public class MainActivity extends ActionBarActivity implements IDebugTerminal {
         chatView.setAdapter(adapter);
 
         dbgText = (TextView)findViewById(R.id.dbgText);
+        dbgText.setVisibility(View.GONE);
     }
 
     public void dbg(final String text) {
@@ -101,6 +107,15 @@ public class MainActivity extends ActionBarActivity implements IDebugTerminal {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }
+
+        if (id == R.id.action_debug) {
+            if(dbgText.getVisibility() == View.GONE) {
+                dbgText.setVisibility(View.VISIBLE);
+            }
+            else {
+                dbgText.setVisibility(View.GONE);
+            }
         }
 
         return super.onOptionsItemSelected(item);

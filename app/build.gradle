@@ -9,8 +9,8 @@ android {
         applicationId "cz.cuni.mff.ufal.androidalex"
         minSdkVersion 15
         targetSdkVersion 15
-        versionCode 3
-        versionName "1.2"
+        versionCode 6
+        versionName "1.4"
     }
     buildTypes {
         release {
@@ -26,6 +26,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.koushikdutta.async:androidasync:2.1.6'
     compile 'com.google.protobuf:protobuf-java:2.5.+'
-    compile files('../libs/ndk-speex/speexjni/bin/classes.jar')
 }
 
