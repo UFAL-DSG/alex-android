@@ -1,7 +1,10 @@
 package cz.cuni.mff.ufal.androidalex;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.graphics.PorterDuff;
+import android.os.AsyncTask;
+import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +26,26 @@ import com.koushikdutta.async.callback.DataCallback;
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.WebSocket;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -34,9 +57,9 @@ import cz.cuni.mff.ufal.alex.WsioMessages;
 
 public class MainActivity extends ActionBarActivity implements IDebugTerminal {
     //String routerAddr = "http://10.10.90.143:9001"; //http://195.113.16.35:9001"; //"http://147.251.253.69:5000/"; //
-    String routerAddr = "http://147.251.253.69:5000/";
+    //String routerAddr = "http://147.251.253.69:5000/";
     //String routerAddr = "http://10.0.0.8:9001/";
-    //String routerAddr = "http://195.113.16.55:9001/";
+    String routerAddr = "http://195.113.16.55:9001/";
     int sampleRate = 16000;
 
     WebSocket ws;
@@ -56,6 +79,41 @@ public class MainActivity extends ActionBarActivity implements IDebugTerminal {
     int lastAudioFlushSeq = 0;
     int currUtteranceId;
 
+    private class RouterAddrResolver extends AsyncTask<String, Integer, String> {
+        protected String doInBackground(String... urls) {
+            try {
+                return httpGET(urls[0]);
+            } catch(Exception e) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            routerAddr = s;
+            addChat("Using: " + routerAddr, true);
+        }
+
+        public String httpGET(String urlToRead) throws MalformedURLException, IOException {
+            StringBuilder result = new StringBuilder();
+            URL url = null;
+            url = new URL(urlToRead);
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line;
+            while ((line = rd.readLine()) != null) {
+                result.append(line);
+            }
+            rd.close();
+
+            return result.toString();
+        }
+    }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +131,23 @@ public class MainActivity extends ActionBarActivity implements IDebugTerminal {
 
         dbgText = (TextView)findViewById(R.id.dbgText);
         dbgText.setVisibility(View.GONE);
+
+        try {
+            RouterAddrResolver get = new RouterAddrResolver();
+            get.execute("https://vystadial.ms.mff.cuni.cz/android-alex-wsrouter.txt");
+        } catch (Exception e) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(e.toString())
+                    .setTitle("System unavailable!");
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+            });
+        }
     }
 
     public void dbg(final String text) {
